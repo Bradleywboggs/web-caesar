@@ -1,53 +1,25 @@
 from flask import Flask, request
 from caesar import rotate_string
-# , render_template
- 
+import os
+import jinja2
+
+template_dir = os.path.join(os.path.dirname(__file__), 'templates' )
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape=True)
+
 app = Flask(__name__)
 app.config['DEBUG'] = True
 
-
-form ="""
-<!DOCTYPE html>
-<html>
-    <head>
-       <style>
-       form {{
-    background-color: #eee;
-    padding: 20px;
-    margin: 0 auto;
-    width: 540px;
-    font: 16px sans-serif;
-    border-radius: 10px;
-}}
-textarea {{
-    margin: 10px 0;
-    width: 540px;
-    height: 120px;
-}}
-       </style>
-    </head>
-    <body>
-      <form action="/" method='POST'>
-      <label>Rotate by (input a number)
-        <input type=text name="rot" size="5"/>
-      </label><br><br>
-      <label> Your Message
-        <textarea name="text">{0}</textarea>
-      </label>
-      <input type=submit />
-      </form>
-    </body>
-</html> """
-
 @app.route("/")
 def index():
-    return form.format("")
+    template = jinja_env.get_template("form.html")
+    return template.render()
 
 @app.route("/", methods=['POST'])
 def encrypt():
+    template = jinja_env.get_template("form.html")
     rot = int(request.form['rot'])
     txt = request.form['text']
     encrypted_string = rotate_string(txt, rot)
-    return form.format(encrypted_string)
+    return template.render(text=encrypted_string)
 
 app.run()
