@@ -7,7 +7,6 @@ app.config['DEBUG'] = True
 
 @app.route("/")
 def index():
-    template = jinja_env.get_template("form.html")
     return render_template("form.html")
 
 @app.route("/", methods=['POST'])
